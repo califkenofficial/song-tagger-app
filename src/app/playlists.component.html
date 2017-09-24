@@ -1,0 +1,9 @@
+<div class="container">
+  <div class="row" *ngFor="let playlist of playlists">
+    <div class="card card-block">
+      <h4 class="card-title">{{ playlist.name }}</h4>
+      <a href="#" class="card-link">{{playlist.tracks.href}}</a>
+      
+    </div>
+  </div>
+</div>
