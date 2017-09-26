@@ -9,11 +9,23 @@ import { PlaylistsService } from './playlists.service';
 import { PlaylistSongsService } from './playlist_songs.service';
 import { SongService } from './song.service';
 
+
 import { PlaylistsComponent } from './playlists.component';
 import { PlaylistSongsComponent } from './playlist_songs.component';
 import { SongComponent } from './song.component';
+import { LoginComponent } from './login.component';
+
 
 const ROUTES = [
+ {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full' 
+  },
+  {
+    path: 'login',
+    component: LoginComponent,
+  },
   {
     path: 'playlists',
     component: PlaylistsComponent,
@@ -33,7 +45,8 @@ const ROUTES = [
     AppComponent,
     PlaylistsComponent,
     PlaylistSongsComponent,
-    SongComponent
+    SongComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -44,7 +57,7 @@ const ROUTES = [
   providers: [
     PlaylistsService,
     PlaylistSongsService,
-    SongService
+    SongService,
   ],
   bootstrap: [AppComponent]
 })

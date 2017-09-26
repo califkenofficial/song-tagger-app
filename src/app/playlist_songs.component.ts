@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 import { Location }                 from '@angular/common';
 import { PlaylistSongsService } from './playlist_songs.service';
@@ -15,7 +16,8 @@ export class PlaylistSongsComponent implements OnInit {
 
   constructor(private playlistSongsService: PlaylistSongsService,
     private route: ActivatedRoute,
-    private location: Location) { }
+    private location: Location,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.route.params
@@ -26,6 +28,10 @@ export class PlaylistSongsComponent implements OnInit {
         console.log(songs)
         this.songs = songs.items;
       }, error => console.log(error));
+  }
+
+  goToSong(song) : void {
+    this.router.navigate(['/song', song.track.id ]);
   }
 
 }

@@ -27,6 +27,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/login', (req, res) => {
+  console.log("here")
   let state = generateRandomString(16);
   res.cookie(stateKey, state);
 
@@ -46,7 +47,7 @@ router.get('/login', (req, res) => {
 router.get('/callback', (req, res) => {
   // your application requests refresh and access tokens
   // after checking the state parameter
-
+  console.log("here 2")
   let code = req.query.code || null;
   let state = req.query.state || null;
   let storedState = req.cookies ? req.cookies[stateKey] : null;
@@ -89,11 +90,7 @@ router.get('/callback', (req, res) => {
         });
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect('/#' +
-          querystring.stringify({
-            access_token: access_token,
-            refresh_token: refresh_token
-          }));
+        res.redirect('/playlists');
       } else {
         res.redirect('/#' +
           querystring.stringify({
