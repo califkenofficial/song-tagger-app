@@ -2,6 +2,8 @@
 <!-- main wavesurfer.js lib -->
 <h4 class="card-title">{{ name }}</h4>  
 <div id="waveform"></div>
+<div id="tags">
+</div>
 <div style="text-align: center">
  <button class="btn btn-primary" (click)="tag()">
     Tag
@@ -9,8 +11,7 @@
   <button class="btn btn-primary" (click)="playPause()">
     Play
   </button>
-
-  <p class="row">
-   
-  </p>
+  <button class="btn btn-primary" (click)="submitText()">
+    Submit
+  </button>
 </div>
