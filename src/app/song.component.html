@@ -2,16 +2,20 @@
 <!-- main wavesurfer.js lib -->
 <h4 class="card-title">{{ name }}</h4>  
 <div id="waveform"></div>
-<div id="tags">
+<div #tags id="tags">
 </div>
-<div style="text-align: center">
+<div style="text-align: center; margin-top: 50px;">
  <button class="btn btn-primary" (click)="tag()">
     Tag
   </button>
   <button class="btn btn-primary" (click)="playPause()">
     Play
   </button>
-  <button class="btn btn-primary" (click)="submitText()">
+</div>
+<div id="comment" style="text-align: center; margin-top: 50px;">
+  <p>Enter Your Tag Comment</p>
+  <input #box>
+    <button class="btn btn-primary" (click)="submitText(box.value)">
     Submit
   </button>
 </div>

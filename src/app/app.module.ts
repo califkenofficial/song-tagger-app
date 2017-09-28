@@ -15,6 +15,7 @@ import { PlaylistsComponent } from './playlists.component';
 import { PlaylistSongsComponent } from './playlist_songs.component';
 import { SongComponent } from './song.component';
 import { LoginComponent } from './login.component';
+import { ReadableTagComponent } from './readable_tag.component';
 
 
 const ROUTES = [
@@ -47,8 +48,10 @@ const ROUTES = [
     PlaylistsComponent,
     PlaylistSongsComponent,
     SongComponent,
-    LoginComponent
+    LoginComponent,
+    ReadableTagComponent
   ],
+  entryComponents: [ReadableTagComponent],
   imports: [
     BrowserModule,
     FormsModule,
