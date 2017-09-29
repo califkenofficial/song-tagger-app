@@ -3,6 +3,10 @@ const router = express.Router();
 const request = require('request'); // "Request" library
 const querystring = require('querystring');
 const cookieParser = require('cookie-parser');
+const mongoose = require('mongoose');
+let Tag = require('../../data/db');
+mongoose.connect('mongodb://localhost/test');
+
 
 const client_id = '356e5c975b12471d9875649901894fbb'; // Your client id
 const client_secret = '07b51f3f7224498e91cd093302f9da1b'; // Your secret
@@ -167,5 +171,37 @@ router.get('/playlist_songs/:track_id/', (req, res) => {
     console.log(body);
     res.status(200).json(body);
   })
+});
+
+router.get('/tags/:song_id', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+  console.log(req.body);
+})
+
+router.post('/tags/:song_id', function(req, res, next) {
+  console.log("in api", req.params.song_id, req.body);
+  var songId = req.params.song_id;
+  var tags = req.body;
+  tags.forEach(function(tag){
+    if (!tag.text) {
+      res.status(400);
+      res.json({
+          "error": "Invalid Data"
+      });
+    } else {
+      var newTag = Tag({
+        songId : songId,
+        title: tag.position,
+        text: tag.text,
+        time: tag.time,
+      });
+      newTag.save(function(err) {
+        if (err) {
+            res.send(err);
+        }
+      })
+    }
+  })
+    
 });
 module.exports = router;

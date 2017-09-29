@@ -5,6 +5,8 @@ import { Location }                 from '@angular/common';
 import { SongService } from './song.service';
 import { Tag } from './Tag'
 import { ReadableTagComponent } from './readable_tag.component';
+import { ReadableTagService } from './readable_tag.service';
+
 import Wavesurfer from 'wavesurfer.js';
 
 @Component({
@@ -14,11 +16,14 @@ import Wavesurfer from 'wavesurfer.js';
 })
 export class SongComponent implements OnInit {
   @ViewChild('tags', {read: ViewContainerRef}) viewContainer: ViewContainerRef;
-  name: String;
+  name: string;
+  songId: string;
   waveSurfer: Wavesurfer;
   pendingTag: Function;
+  tagsArray: Tag[] = new Array();
 
   constructor(private songsService: SongService,
+    private readableTagService: ReadableTagService,
     private route: ActivatedRoute,
     private location: Location,
     public newTag: Tag,
@@ -35,9 +40,10 @@ export class SongComponent implements OnInit {
 
     
     this.route.params
-      .switchMap(params => 
-        this.songsService.getSong(params['track_id'])
-      )
+      .switchMap(params => {
+        this.songId = params['track_id'];
+        return this.songsService.getSong(this.songId);
+      })
       .subscribe(song => {
         this.name = song.name;
         this.waveSurfer.load(song.preview_url);
@@ -57,6 +63,7 @@ export class SongComponent implements OnInit {
 
   submitText(text: string): void {
     let tag = this.pendingTag(text);
+    this.tagsArray.push(tag);
     this.renderTag(tag);
   }
 
@@ -79,5 +86,10 @@ export class SongComponent implements OnInit {
     this.renderer.setElementStyle(ref.location.nativeElement, 'position', 'absolute')
     this.renderer.setElementStyle(ref.location.nativeElement, 'left', tag.position+'%');
     this.renderer.createText(ref.location.nativeElement.children[1], tag.text);
+  }
+
+  saveTagsToSong() {
+    console.log(this.tagsArray);
+    this.readableTagService.saveTags(this.tagsArray, this.songId).subscribe(response => console.log(response));
   }
 }

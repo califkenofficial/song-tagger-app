@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { PlaylistsService } from './playlists.service';
 import { PlaylistSongsService } from './playlist_songs.service';
 import { SongService } from './song.service';
+import { ReadableTagService } from './readable_tag.service'
 import { Tag } from './Tag';
 
 
@@ -62,6 +63,7 @@ const ROUTES = [
     PlaylistsService,
     PlaylistSongsService,
     SongService,
+    ReadableTagService,
     Tag
   ],
   bootstrap: [AppComponent]
