@@ -183,7 +183,7 @@ router.post('/tags/:song_id', function(req, res, next) {
   var songId = req.params.song_id;
   var tags = req.body;
   tags.forEach(function(tag){
-    if (!tag.text) {
+    if (!tag[1]) {
       res.status(400);
       res.json({
           "error": "Invalid Data"
@@ -191,9 +191,9 @@ router.post('/tags/:song_id', function(req, res, next) {
     } else {
       var newTag = Tag({
         songId : songId,
-        title: tag.position,
-        text: tag.text,
-        time: tag.time,
+        title: tag[0].currentPosition,
+        text: tag[1],
+        time: tag[0].time,
       });
       newTag.save(function(err) {
         if (err) {

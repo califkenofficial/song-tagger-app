@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewContainerRef, ComponentFactoryResolver, ViewChild, Renderer } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
+import { Observable, Subject } from 'rxjs';
 import { Location }                 from '@angular/common';
 import { SongService } from './song.service';
 import { Tag } from './Tag'
@@ -16,11 +17,13 @@ import Wavesurfer from 'wavesurfer.js';
 })
 export class SongComponent implements OnInit {
   @ViewChild('tags', {read: ViewContainerRef}) viewContainer: ViewContainerRef;
+  @ViewChild('tagbutton') button;
+  clicks$: Observable<any>;
+  tagTextSubject:Subject<any> = new Subject();
   name: string;
   songId: string;
   waveSurfer: Wavesurfer;
-  pendingTag: Function;
-  tagsArray: Tag[] = new Array();
+  tagsArray: any[][] = new Array();
 
   constructor(private songsService: SongService,
     private readableTagService: ReadableTagService,
@@ -38,7 +41,6 @@ export class SongComponent implements OnInit {
       progressColor: 'purple'
     });
 
-    
     this.route.params
       .switchMap(params => {
         this.songId = params['track_id'];
@@ -48,48 +50,62 @@ export class SongComponent implements OnInit {
         this.name = song.name;
         this.waveSurfer.load(song.preview_url);
       }, error => console.log(error));
+
+    let mapper = this.toCurrentPosition();
+    this.clicks$ = Observable.fromEvent(this.button.nativeElement, 'click')
+      .map(mapper);
+
+    const zipTagInfo = Observable
+    .zip(
+      this.clicks$,
+      this.tagTextSubject
+    );
+    const createTag = zipTagInfo.subscribe(val => this.renderAndStoreTag(val));
+
   }
+
+  curryWaveSurfer(waveSurfer){
+    return _ => {
+      let waveInfo = {
+        time: waveSurfer.getCurrentTime(),
+        currentPosition: this.getTagPosition()
+      };
+      return waveInfo;
+    }
+  }
+  
+  toCurrentPosition() {
+    return this.curryWaveSurfer(this.waveSurfer);
+  }
+
+  getTagPosition() {
+    let currentPostion = document.getElementById("waveform").children[0].children[0].clientWidth;
+    let waveWidth = document.getElementById("waveform").children[0].children[1].clientWidth;
+    return (currentPostion / waveWidth) * 100; 
+  }
+
+  submitText(text: string): void {
+    this.tagTextSubject.next(text);
+  }
+
 
   playPause(): void {
     this.waveSurfer.playPause();
   }
 
-  tag(): void {
-    let currentPostion = document.getElementById("waveform").children[0].children[0].clientWidth;
-    let waveWidth = document.getElementById("waveform").children[0].children[1].clientWidth;
-    let tagPosition = (currentPostion / waveWidth) * 100; 
-    this.pendingTag = this.createTag(tagPosition, this.waveSurfer.getCurrentTime());
-  }
-
-  submitText(text: string): void {
-    let tag = this.pendingTag(text);
-    this.tagsArray.push(tag);
-    this.renderTag(tag);
-  }
-
-  createTag(postion: number, time: number ): Function {
-    this.newTag = new Tag();
-    this.newTag.position = postion;
-    this.newTag.time = time;
-
-    return (text) => {
-      this.newTag.text = text;
-      return this.newTag;
-    }
-  }
-
-  renderTag(tag): void {
+  renderAndStoreTag(tagArray): void {
     //create tag component and render it
+    this.tagsArray.push(tagArray);
     let tagHolder = document.getElementById('tags');
     const factory = this.componentFactoryResolver.resolveComponentFactory(ReadableTagComponent);
     const ref = this.viewContainer.createComponent(factory);
     this.renderer.setElementStyle(ref.location.nativeElement, 'position', 'absolute')
-    this.renderer.setElementStyle(ref.location.nativeElement, 'left', tag.position+'%');
-    this.renderer.createText(ref.location.nativeElement.children[1], tag.text);
+    this.renderer.setElementStyle(ref.location.nativeElement, 'left', tagArray[0].currentPosition+'%');
+    this.renderer.createText(ref.location.nativeElement.children[1], tagArray[1]);
   }
 
   saveTagsToSong() {
-    console.log(this.tagsArray);
     this.readableTagService.saveTags(this.tagsArray, this.songId).subscribe(response => console.log(response));
   }
+
 }
