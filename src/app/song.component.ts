@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewContainerRef, ComponentFactoryResolver, ViewChild, Renderer } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Router }         from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 import { Observable, Subject } from 'rxjs';
 import { Location }                 from '@angular/common';
@@ -28,6 +29,7 @@ export class SongComponent implements OnInit {
   constructor(private songsService: SongService,
     private readableTagService: ReadableTagService,
     private route: ActivatedRoute,
+    private router: Router,
     private location: Location,
     public newTag: Tag,
     private componentFactoryResolver: ComponentFactoryResolver,
@@ -105,7 +107,16 @@ export class SongComponent implements OnInit {
   }
 
   saveTagsToSong() {
-    this.readableTagService.saveTags(this.tagsArray, this.songId).subscribe(response => console.log(response));
+    console.log(this.tagsArray)
+    this.readableTagService.saveTags(this.tagsArray, this.songId)
+      .subscribe(
+      result => {
+        this.router.navigate(['/playlists']);
+      },
+      error => {
+        alert("Looks like something went wrong...")
+      }
+    );
   }
 
 }

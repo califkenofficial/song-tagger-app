@@ -178,10 +178,12 @@ router.get('/tags/:song_id', (req, res) => {
   console.log(req.body);
 })
 
-router.post('/tags/:song_id', function(req, res, next) {
+router.post('/tags/:song_id', (req, res, next) => {
   console.log("in api", req.params.song_id, req.body);
   var songId = req.params.song_id;
   var tags = req.body;
+  var errors = [];
+
   tags.forEach(function(tag){
     if (!tag[1]) {
       res.status(400);
@@ -190,18 +192,61 @@ router.post('/tags/:song_id', function(req, res, next) {
       });
     } else {
       var newTag = Tag({
-        songId : songId,
-        title: tag[0].currentPosition,
+        songId: songId,
+        position: tag[0].currentPosition,
         text: tag[1],
-        time: tag[0].time,
+        time: tag[0].time
       });
       newTag.save(function(err) {
         if (err) {
-            res.send(err);
+            errors.push(err)
+        }
+        if(tag === tags.length){
+          if(errors.length > 0) {
+            res.status(400).send("unable to save to database");
+          } else {
+            res.status(200).send("item saved to database");
+          }
         }
       })
+      // .then(item => {
+      //   res.status("item saved to database");
+      // })
+      // .catch(err => {
+      //    res.status(400).send("unable to save to database");
+      // });
     }
-  })
-    
+  }) 
+});
+
+router.get('/tagged_songs', (req, res) => {
+  Tag.aggregate([
+     {$group: { _id: "$songId"}}
+  ])
+  .then(items => {
+    let tracks = items.map(function(obj){ return obj._id });
+    let url = 'https://api.spotify.com/v1/tracks/?ids='+tracks;
+    let options = {
+      url: url,
+      headers : { 'Authorization': 'Bearer ' + accessToken},
+      json: true
+    };
+    request.get(options, (error, response, body) => {
+      console.log(body);
+      res.status(200).json(body);
+    })
+  });
+
+});
+
+router.get('/tagged_song/:song_id', (req, res) => {
+  var song_id = req.params.song_id;
+  Tag.find({songId: song_id }, function (err, tags) {
+    if(err){
+      console.log(err);
+    } else{
+      res.status(200).json(tags);
+    } 
+  });
 });
 module.exports = router;

@@ -4,18 +4,13 @@ import 'rxjs/add/operator/map';
 
 
 @Injectable()
-export class ReadableTagService {
+export class TaggedSongsService {
 
   constructor(private http: Http) { }
   // Get all posts from the API
 
-  getAllTags() {
-    return this.http.get('/api/tags/:song_id/')
+  getAllTaggedSongs() {
+    return this.http.get('/api/tagged_songs')
       .map(res => res.json());
   }
-
-  saveTags(tags, song_id) {
-    return this.http.post('/api/tags/'+song_id, tags)
-  }
-
 }

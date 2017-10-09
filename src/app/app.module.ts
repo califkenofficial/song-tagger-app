@@ -8,7 +8,9 @@ import { AppComponent } from './app.component';
 import { PlaylistsService } from './playlists.service';
 import { PlaylistSongsService } from './playlist_songs.service';
 import { SongService } from './song.service';
-import { ReadableTagService } from './readable_tag.service'
+import { ReadableTagService } from './readable_tag.service';
+import { TaggedSongsService } from './tagged_songs.service';
+import { TaggedSongService } from './tagged_song.service';
 import { Tag } from './Tag';
 
 
@@ -17,6 +19,9 @@ import { PlaylistSongsComponent } from './playlist_songs.component';
 import { SongComponent } from './song.component';
 import { LoginComponent } from './login.component';
 import { ReadableTagComponent } from './readable_tag.component';
+import { TaggedSongsComponent } from './tagged_songs.component';
+import { TaggedSongComponent } from './tagged_song.component';
+
 
 
 const ROUTES = [
@@ -37,10 +42,18 @@ const ROUTES = [
     path: 'playlist_songs/:user_id/:playlist_id',
     component: PlaylistSongsComponent,
   },
-   {
+  {
     path: 'song/:track_id',
     component: SongComponent,
-  }
+  },
+  {
+    path: 'tagged_songs',
+    component: TaggedSongsComponent,
+  },
+  {
+    path: 'tagged_song/:track_id/:track_title/:preview',
+    component: TaggedSongComponent,
+  },
 ];
 
 @NgModule({
@@ -50,7 +63,9 @@ const ROUTES = [
     PlaylistSongsComponent,
     SongComponent,
     LoginComponent,
-    ReadableTagComponent
+    ReadableTagComponent,
+    TaggedSongsComponent,
+    TaggedSongComponent
   ],
   entryComponents: [ReadableTagComponent],
   imports: [
@@ -64,6 +79,8 @@ const ROUTES = [
     PlaylistSongsService,
     SongService,
     ReadableTagService,
+    TaggedSongsService,
+    TaggedSongService,
     Tag
   ],
   bootstrap: [AppComponent]
