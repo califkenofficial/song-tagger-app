@@ -4,7 +4,9 @@ const request = require('request'); // "Request" library
 const querystring = require('querystring');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
+
 let Tag = require('../../data/db');
+
 mongoose.connect('mongodb://localhost/test');
 
 
@@ -94,7 +96,7 @@ router.get('/callback', (req, res) => {
         });
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect('/playlists');
+        res.redirect('/dashboard');
       } else {
         res.redirect('/#' +
           querystring.stringify({
@@ -184,7 +186,7 @@ router.post('/tags/:song_id', (req, res, next) => {
   var tags = req.body;
   var errors = [];
 
-  tags.forEach(function(tag){
+  tags.forEach(function(tag, idx, array){
     if (!tag[1]) {
       res.status(400);
       res.json({
@@ -201,11 +203,11 @@ router.post('/tags/:song_id', (req, res, next) => {
         if (err) {
             errors.push(err)
         }
-        if(tag === tags.length){
+        if(idx === array.length-1){
           if(errors.length > 0) {
             res.status(400).send("unable to save to database");
           } else {
-            res.status(200).send("item saved to database");
+            res.status(200).send("Saved!");
           }
         }
       })

@@ -10,7 +10,7 @@ describe('PlaylistsService', () => {
     });
   });
 
-  it('should ...', inject([PlaylistsService], (service: PlaylistsService) => {
+  xit('should ...', inject([PlaylistsService], (service: PlaylistsService) => {
     expect(service).toBeTruthy();
   }));
 });

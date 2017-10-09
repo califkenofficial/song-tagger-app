@@ -5,7 +5,7 @@ import { Router }           from '@angular/router';
 @Component({
   selector: 'app-playlists',
   templateUrl: './playlists.component.html',
-  //styleUrls: ['./playlists.component.css']
+  styles: [`.container{ margin-top: 20px; }`]
 })
 export class PlaylistsComponent implements OnInit {
   // instantiate playlists to an empty array

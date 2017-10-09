@@ -1,7 +1,10 @@
 <div class="container">
   <div class="card card-block">
+  <div class="row">
+    <h4>Your Playlists</h4>
+  </div>
     <div class="row" *ngFor="let playlist of playlists" (click)="goToPlaylist(playlist)">
-      <h4 class="card-title">{{ playlist.name }}</h4>
+      <p class="card-title">{{ playlist.name }}</p>
     </div>
   </div>
 </div>

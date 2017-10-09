@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
+import { Presenter } from './presenter.module';
 import { PlaylistsService } from './playlists.service';
 import { PlaylistSongsService } from './playlist_songs.service';
 import { SongService } from './song.service';
@@ -18,6 +19,7 @@ import { PlaylistsComponent } from './playlists.component';
 import { PlaylistSongsComponent } from './playlist_songs.component';
 import { SongComponent } from './song.component';
 import { LoginComponent } from './login.component';
+import { DashboardComponent } from './dashboard.component';
 import { ReadableTagComponent } from './readable_tag.component';
 import { TaggedSongsComponent } from './tagged_songs.component';
 import { TaggedSongComponent } from './tagged_song.component';
@@ -33,6 +35,10 @@ const ROUTES = [
   {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
   },
   {
     path: 'playlists',
@@ -63,6 +69,7 @@ const ROUTES = [
     PlaylistSongsComponent,
     SongComponent,
     LoginComponent,
+    DashboardComponent,
     ReadableTagComponent,
     TaggedSongsComponent,
     TaggedSongComponent
@@ -81,7 +88,8 @@ const ROUTES = [
     ReadableTagService,
     TaggedSongsService,
     TaggedSongService,
-    Tag
+    Tag,
+    Presenter
   ],
   bootstrap: [AppComponent]
 })

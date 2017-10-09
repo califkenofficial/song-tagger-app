@@ -1,7 +1,7 @@
 <div class="container">
   <div class="card card-block">
     <div class="row" *ngFor="let song of songs" (click)="goToTaggedSong(song)">
-      <h4 class="card-title">{{ song.name }}</h4>
+      <p class="card-title">{{ song.name }}</p>
     </div>
   </div>
 </div>

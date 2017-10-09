@@ -7,6 +7,8 @@ import { TaggedSongService } from './tagged_song.service';
 import { ReadableTagComponent } from './readable_tag.component';
 import { ReadableTagService } from './readable_tag.service';
 
+import { Presenter } from './presenter.module';
+
 import Wavesurfer from 'wavesurfer.js';
 
 @Component({
@@ -31,7 +33,8 @@ export class TaggedSongComponent implements OnInit {
     private route: ActivatedRoute,
     private componentFactoryResolver: ComponentFactoryResolver,
     private viewContainerRef: ViewContainerRef,
-    private renderer: Renderer){}
+    private renderer: Renderer,
+    private presenter: Presenter){}
 
   ngOnInit(): void {
     this.waveSurfer = Wavesurfer.create({
@@ -45,6 +48,7 @@ export class TaggedSongComponent implements OnInit {
     this.taggedSongService.getTags(this.route.snapshot.params['track_id'])
     .subscribe(tags => {
       this.tags = tags;
+      this.presenter.setTags(tags);
       this.renderTags(this.tags);
     });
 
@@ -68,56 +72,61 @@ export class TaggedSongComponent implements OnInit {
     let pauseEvents = Observable.fromEvent(this.pauseButton.nativeElement, 'click')
       .map(_ => 'pause');
 
+    let uiActions = this.presenter.getViewActions(playEvents, pauseEvents, this.seekEvents, this.waveSurfer);
+
+
+
     //commands become actions
-    let uiActions = this.createUiActions(this.createTagCommands(playEvents, pauseEvents, this.seekEvents))
+    //let uiActions = this.createUiActions(this.createTagCommands(playEvents, pauseEvents, this.seekEvents))
 
     //subscribe to actions 
     uiActions.subscribe(tagAction => {  
-      if(tagAction.action === 'hideAll') {
+      console.log(tagAction)
+      if(tagAction['action'] === 'hideAll') {
         this.hideTags();
       }
-      else if(tagAction.action === 'show'){
-        this.renderer.setElementStyle(document.getElementsByClassName((tagAction.tag.time).toString())[0].children[1], 'display', 'block');
+      else if(tagAction['action'] === 'show'){
+        this.renderer.setElementStyle(document.getElementsByClassName((tagAction['tag'].time).toString())[0].children[1], 'display', 'block');
       } else {
-        this.hideTag(tagAction.tag);
+        this.hideTag(tagAction['tag']);
       }
     }, error => console.log(error));
   }
 
   //combine all types of commands and associated actions into one observable
-  createTagCommands(playEvents, pauseEvents, seekEvents) : Observable<any>{
-    let tagCommands = Observable.merge(playEvents, pauseEvents)
-      .distinctUntilChanged()
-      .do(_ => {
-        this.waveSurfer.playPause();
-      })
-      .map(intent => {
-        if(intent === 'play'){
-          return {
-            currentTime: this.waveSurfer.getCurrentTime(),
-            action: 'startTagsPlayback'
-          }
-        } else {
-          return {
-            currentTime: 0,
-            action: 'stopTagsPlayback'
-          }
-        }
-      });
-    return Observable.merge(tagCommands, seekEvents);
-  }
+  // createTagCommands(playEvents, pauseEvents, seekEvents) : Observable<any>{
+  //   let tagCommands = Observable.merge(playEvents, pauseEvents)
+  //     .distinctUntilChanged()
+  //     .do(_ => {
+  //       this.waveSurfer.playPause();
+  //     })
+  //     .map(intent => {
+  //       if(intent === 'play'){
+  //         return {
+  //           currentTime: this.waveSurfer.getCurrentTime(),
+  //           action: 'startTagsPlayback'
+  //         }
+  //       } else {
+  //         return {
+  //           currentTime: 0,
+  //           action: 'stopTagsPlayback'
+  //         }
+  //       }
+  //     });
+  //   return Observable.merge(tagCommands, seekEvents);
+  // }
 
-  //takes the commands observable and returns a uiAction based on action
-  createUiActions(tagsCommands):Observable<any>{
-    return tagsCommands
-      .switchMap(cmd => {
-        if(cmd.action === 'startTagsPlayback') {
-          return Observable.concat(Observable.of({tag: null, action: 'hideAll'}), this.getNewTimes(cmd.currentTime))
-        } else {
-          return Observable.of({tag: null, action: 'hideAll'});
-        }
-      });
-  }
+  // //takes the commands observable and returns a uiAction based on action
+  // createUiActions(tagsCommands):Observable<any>{
+  //   return tagsCommands
+  //     .switchMap(cmd => {
+  //       if(cmd.action === 'startTagsPlayback') {
+  //         return Observable.concat(Observable.of({tag: null, action: 'hideAll'}), this.getNewTimes(cmd.currentTime))
+  //       } else {
+  //         return Observable.of({tag: null, action: 'hideAll'});
+  //       }
+  //     });
+  // }
 
   hideTags():void {
     this.tags.forEach(tag => this.hideTag(tag))
@@ -128,29 +137,29 @@ export class TaggedSongComponent implements OnInit {
   }
 
   //every time an action comes in, create a new observable with updated show times and hide emissions
-  getNewTimes(currentTime): Observable<any>{
-    let tags = this.tags;
-    let tagsObservable = Observable.empty();
-    tags.filter(tag => tag.time > currentTime)
-    .forEach(tag => {
-      let tagObservable = this.createTagDisplayObservable(tag, currentTime);
-      tagsObservable = Observable.merge(tagObservable, tagsObservable);
-    })
-    return tagsObservable;
-  }
+  // getNewTimes(currentTime): Observable<any>{
+  //   let tags = this.tags;
+  //   let tagsObservable = Observable.empty();
+  //   tags.filter(tag => tag.time > currentTime)
+  //   .forEach(tag => {
+  //     let tagObservable = this.createTagDisplayObservable(tag, currentTime);
+  //     tagsObservable = Observable.merge(tagObservable, tagsObservable);
+  //   })
+  //   return tagsObservable;
+  // }
 
   //create two observables and concat: one to determine when to show tag and the other to hide it
-  createTagDisplayObservable(tag, currentTime) : Observable<any> {
-    let showTagObservable = Observable.of(tag).delay((currentTime - tag.time) * 1000)
-    .map(tag => {
-      return {tag: tag, action: 'show'};
-    });
-    let hideTagObservable = Observable.of(tag).delay(2000)
-    .map(tag => {
-      return {tag: tag, action: 'hide'};
-    });
-    return Observable.concat(showTagObservable, hideTagObservable);
-  }
+  // createTagDisplayObservable(tag, currentTime) : Observable<any> {
+  //   let showTagObservable = Observable.of(tag).delay((currentTime - tag.time) * 1000)
+  //   .map(tag => {
+  //     return {tag: tag, action: 'show'};
+  //   });
+  //   let hideTagObservable = Observable.of(tag).delay(2000)
+  //   .map(tag => {
+  //     return {tag: tag, action: 'hide'};
+  //   });
+  //   return Observable.concat(showTagObservable, hideTagObservable);
+  // }
 
   renderTags(tags) {
     tags.forEach(tag => {

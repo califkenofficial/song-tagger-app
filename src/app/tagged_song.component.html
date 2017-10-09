@@ -1,14 +1,17 @@
-
+<div id="container">
 <!-- main wavesurfer.js lib -->
-<h4 class="card-title">{{ name }}</h4>  
-<div id="waveform"></div>
-<div #tags id="tags">
+  <h4 class="card-title">{{ name }}</h4>  
+  <div id="waveform"></div>
+  <div #tags id="tags">
+  </div>
+  <div style="text-align: center; margin-top: 50px;">
+    <button #playbutton class="btn btn-primary">
+      Play
+    </button>
+    <button #pausebutton class="btn btn-primary">
+      Pause
+    </button>
+  </div>
 </div>
-<div style="text-align: center; margin-top: 50px;">
-  <button #playbutton class="btn btn-primary">
-    Play
-  </button>
-  <button #pausebutton class="btn btn-primary">
-    Pause
-  </button>
-</div>
+
+

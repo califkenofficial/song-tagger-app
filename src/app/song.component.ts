@@ -107,7 +107,6 @@ export class SongComponent implements OnInit {
   }
 
   saveTagsToSong() {
-    console.log(this.tagsArray)
     this.readableTagService.saveTags(this.tagsArray, this.songId)
       .subscribe(
       result => {

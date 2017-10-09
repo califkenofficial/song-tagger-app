@@ -7,7 +7,7 @@ import { TaggedSongsService } from './tagged_songs.service';
 @Component({
   selector: 'app-tagged-songs',
   templateUrl: './tagged_songs.component.html',
-  //styleUrls: ['./song.component.css']
+  styles: [`.container{ margin-top: 20px; }`]
 })
 export class TaggedSongsComponent implements OnInit {
   constructor(
