@@ -1,5 +1,6 @@
 // Get dependencies
 const express = require('express');
+const session = require('express-session');
 const path = require('path');
 const http = require('http');
 const bodyParser = require('body-parser');
@@ -9,6 +10,7 @@ const api = require('./server/routes/api');
 
 const app = express();
 
+app.use(session({secret: 'ssshhhhh'}));
 // Parsers for POST data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

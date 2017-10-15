@@ -1,16 +1,16 @@
 <div id="container">
+  <div class="header">
+    <img src={{image}}/>
+    <h4>{{ song }}</h4>  
+    <h5 style="margin-bottom: 50px;"> {{ artist }}</h5>
+    <button class="btn btn-primary" #playbutton>
+      <i class="fa fa-play" aria-hidden="true"></i> / <i class="fa fa-pause" aria-hidden="true"></i>
+    </button>
+  </div>
+
 <!-- main wavesurfer.js lib -->
-  <h4 class="card-title">{{ name }}</h4>  
   <div id="waveform"></div>
   <div #tags id="tags">
-  </div>
-  <div style="text-align: center; margin-top: 50px;">
-    <button #playbutton class="btn btn-primary">
-      Play
-    </button>
-    <button #pausebutton class="btn btn-primary">
-      Pause
-    </button>
   </div>
 </div>
 

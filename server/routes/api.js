@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require('express-session');
 const router = express.Router();
 const request = require('request'); // "Request" library
 const querystring = require('querystring');
@@ -14,7 +15,6 @@ const client_id = '356e5c975b12471d9875649901894fbb'; // Your client id
 const client_secret = '07b51f3f7224498e91cd093302f9da1b'; // Your secret
 const redirect_uri = 'http://localhost:3000/api/callback'; // Your redirect uri
 
-let accessToken = "";
 let generateRandomString = function(length) {
   let text = '';
   let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -26,34 +26,44 @@ let generateRandomString = function(length) {
 };
 
 let stateKey = 'spotify_auth_state';
+let sess;
+
 router.use(cookieParser());
 /* GET api listing. */
 router.get('/', (req, res) => {
+  sess.user;
+  sess.access;
   res.send('api works');
 });
 
 router.get('/login', (req, res) => {
-  console.log("here")
-  let state = generateRandomString(16);
-  res.cookie(stateKey, state);
+  console.log("over here")
+  sess = req.session;
+  //Session set when user Request our app via URL
+  if(sess.access) {
+    res.redirect('/tagged_songs');
+  } else {
+    let state = generateRandomString(16);
+    res.cookie(stateKey, state);
 
-  // your application requests authorization
-  let scope = 'user-read-private user-read-email playlist-read-private';
-  res.redirect('https://accounts.spotify.com/authorize?' +
-    querystring.stringify({
-      response_type: 'code',
-      client_id: client_id,
-      scope: scope,
-      redirect_uri: redirect_uri,
-      state: state
-    })
-  );
+    // your application requests authorization
+    let scope = 'user-read-private user-read-email playlist-read-private';
+    res.redirect('https://accounts.spotify.com/authorize?' +
+      querystring.stringify({
+        response_type: 'code',
+        client_id: client_id,
+        scope: scope,
+        redirect_uri: redirect_uri,
+        state: state
+      })
+    );
+  } 
 });
 
 router.get('/callback', (req, res) => {
   // your application requests refresh and access tokens
   // after checking the state parameter
-  console.log("here 2")
+  sess = req.session;
   let code = req.query.code || null;
   let state = req.query.state || null;
   let storedState = req.cookies ? req.cookies[stateKey] : null;
@@ -82,7 +92,7 @@ router.get('/callback', (req, res) => {
 
         let access_token = body.access_token,
             refresh_token = body.refresh_token;
-        accessToken = access_token;
+        sess.access = access_token;
 
         let options = {
           url: 'https://api.spotify.com/v1/me',
@@ -91,12 +101,12 @@ router.get('/callback', (req, res) => {
         };
 
         // use the access token to access the Spotify Web API
-        request.get(options, (error, response, body) => {
-          console.log(body);
+        request.get(options, (error, response, body) => {  
+          sess.user = body.display_name;
         });
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect('/dashboard');
+        res.redirect('/tagged_songs');
       } else {
         res.redirect('/#' +
           querystring.stringify({
@@ -132,40 +142,41 @@ router.get('/refresh_token', (req, res) => {
 });
 
 router.get('/user_playlists', (req, res) => {
+  sess = req.session;
   let options = {
     url: 'https://api.spotify.com/v1/me/playlists',
-    headers : { 'Authorization': 'Bearer ' + accessToken},
+    headers : { 'Authorization': 'Bearer ' + sess.access},
     json: true
   };
 
   request.get(options, (error, response, body) => {
-    console.log(body);
     res.status(200).json(body.items);
   })
 });
 
 router.get('/playlist_songs/:user_id/:playlist_id', (req, res) => {
+  sess = req.session;
   let user_id = req.params.user_id;
   let playlist_id = req.params.playlist_id;
   let url = 'https://api.spotify.com/v1/users/'+user_id+'/playlists/'+playlist_id+'/tracks';
   let options = {
     url: url,
-    headers : { 'Authorization': 'Bearer ' + accessToken},
+    headers : { 'Authorization': 'Bearer ' + sess.access},
     json: true
   };
 
   request.get(options, (error, response, body) => {
-    console.log(body);
-    res.status(200).json(body);
+    res.status(200).json(body.items);
   })
 });
 
 router.get('/playlist_songs/:track_id/', (req, res) => {
+  sess = req.session;
   let track_id = req.params.track_id;
   let url = 'https://api.spotify.com/v1/tracks/'+track_id;
   let options = {
     url: url,
-    headers : { 'Authorization': 'Bearer ' + accessToken},
+    headers : { 'Authorization': 'Bearer ' + sess.access},
     json: true
   };
 
@@ -177,11 +188,11 @@ router.get('/playlist_songs/:track_id/', (req, res) => {
 
 router.get('/tags/:song_id', (req, res) => {
   res.sendFile(__dirname + '/index.html');
-  console.log(req.body);
+  //console.log(req.body);
 })
 
 router.post('/tags/:song_id', (req, res, next) => {
-  console.log("in api", req.params.song_id, req.body);
+  //console.log("in api", req.params.song_id, req.body);
   var songId = req.params.song_id;
   var tags = req.body;
   var errors = [];
@@ -222,6 +233,8 @@ router.post('/tags/:song_id', (req, res, next) => {
 });
 
 router.get('/tagged_songs', (req, res) => {
+  sess = req.session;
+  console.log(sess);
   Tag.aggregate([
      {$group: { _id: "$songId"}}
   ])
@@ -230,7 +243,7 @@ router.get('/tagged_songs', (req, res) => {
     let url = 'https://api.spotify.com/v1/tracks/?ids='+tracks;
     let options = {
       url: url,
-      headers : { 'Authorization': 'Bearer ' + accessToken},
+      headers : { 'Authorization': 'Bearer ' + sess.access},
       json: true
     };
     request.get(options, (error, response, body) => {
@@ -238,10 +251,10 @@ router.get('/tagged_songs', (req, res) => {
       res.status(200).json(body);
     })
   });
-
 });
 
 router.get('/tagged_song/:song_id', (req, res) => {
+
   var song_id = req.params.song_id;
   Tag.find({songId: song_id }, function (err, tags) {
     if(err){

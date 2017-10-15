@@ -1,14 +1,13 @@
 //takes observables for userIntents and returns Observable for uiActions
 import { Observable, Subject, Subscription } from 'rxjs';
 
-let createTagCommands = (playEvents, pauseEvents, seekEvents, waveSurfer) => {
-  let tagCommands = Observable.merge(playEvents, pauseEvents)
-    .distinctUntilChanged()
+let createTagCommands = (playEvents, seekEvents, waveSurfer) => {
+  let tagCommands = Observable.from(playEvents)
     .do(_ => {
       waveSurfer.playPause();
     })
-    .map(intent => {
-      if(intent === 'play'){
+    .map(_ => {
+      if(waveSurfer.isPlaying()){
         return {
           currentTime: waveSurfer.getCurrentTime(),
           action: 'startTagsPlayback'
@@ -50,9 +49,9 @@ let savedTags;
 
 export class Presenter {
 
-  getViewActions(playEvents, pauseEvents, seekEvents, waveSurfer) {
+  getViewActions(playEvents, seekEvents, waveSurfer) {
 
-    let tagsCommands = createTagCommands(playEvents, pauseEvents, seekEvents, waveSurfer);
+    let tagsCommands = createTagCommands(playEvents, seekEvents, waveSurfer);
     
     return tagsCommands
       .switchMap(cmd => {

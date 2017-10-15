@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
 
 import { TaggedSongService } from './tagged_song.service';
+import { SongService } from './song.service';
 import { ReadableTagComponent } from './readable_tag.component';
 import { ReadableTagService } from './readable_tag.service';
 
@@ -24,11 +25,14 @@ export class TaggedSongComponent implements OnInit {
   seekEvents: Subject<any> = new Subject();
   waveSurfer: Wavesurfer;
   song: any;
-  name: string; 
+  name: string;
+  artist: string;
+  image: string; 
   tags : any;
 
   constructor(
     private taggedSongService : TaggedSongService,
+    private songService : SongService,
     private router : Router,
     private route: ActivatedRoute,
     private componentFactoryResolver: ComponentFactoryResolver,
@@ -43,14 +47,21 @@ export class TaggedSongComponent implements OnInit {
       progressColor: 'purple'
     });
     
-    this.name = this.route.snapshot.params['track_title'];
-    this.waveSurfer.load(this.route.snapshot.params['preview']);   
-    this.taggedSongService.getTags(this.route.snapshot.params['track_id'])
-    .subscribe(tags => {
-      this.tags = tags;
-      this.presenter.setTags(tags);
-      this.renderTags(this.tags);
+    // this.name = this.route.snapshot.params['track_title'];
+    this.waveSurfer.load(this.route.snapshot.params['preview']);  
+    this.songService.getSong(this.route.snapshot.params['track_id'])
+      .subscribe(song => {
+        this.song = song.name;
+        this.image = song.album.images[1].url;
+        this.artist = song.artists[0].name;
+        this.waveSurfer.load(song.preview_url);   
     });
+    this.taggedSongService.getTags(this.route.snapshot.params['track_id'])
+      .subscribe(tags => {
+        this.tags = tags;
+        this.presenter.setTags(tags);
+        this.renderTags(this.tags);
+      });
 
     //commands
     this.waveSurfer.on('seek', value => {
@@ -69,12 +80,8 @@ export class TaggedSongComponent implements OnInit {
 
     let playEvents = Observable.fromEvent(this.playButton.nativeElement, 'click')
       .map(_ => 'play');
-    let pauseEvents = Observable.fromEvent(this.pauseButton.nativeElement, 'click')
-      .map(_ => 'pause');
 
-    let uiActions = this.presenter.getViewActions(playEvents, pauseEvents, this.seekEvents, this.waveSurfer);
-
-
+    let uiActions = this.presenter.getViewActions(playEvents, this.seekEvents, this.waveSurfer);
 
     //commands become actions
     //let uiActions = this.createUiActions(this.createTagCommands(playEvents, pauseEvents, this.seekEvents))
@@ -91,6 +98,10 @@ export class TaggedSongComponent implements OnInit {
         this.hideTag(tagAction['tag']);
       }
     }, error => console.log(error));
+  }
+
+  getTags() {
+    return this.tags;
   }
 
   //combine all types of commands and associated actions into one observable

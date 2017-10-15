@@ -1,4 +1,8 @@
 #tags {
   width: 100%;
 }
-#container{ margin-top: 20px; }
+#container{ margin-top: 20px; margin-bottom: 100px; }
+.header {
+  text-align: center;
+  padding: 10px;
+}

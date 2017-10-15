@@ -21,12 +21,14 @@ export class SongComponent implements OnInit {
   @ViewChild('tagbutton') button;
   clicks$: Observable<any>;
   tagTextSubject:Subject<any> = new Subject();
-  name: string;
+  song: any;
+  image: string;
+  artist: string;
   songId: string;
   waveSurfer: Wavesurfer;
   tagsArray: any[][] = new Array();
 
-  constructor(private songsService: SongService,
+  constructor(private songService: SongService,
     private readableTagService: ReadableTagService,
     private route: ActivatedRoute,
     private router: Router,
@@ -46,10 +48,12 @@ export class SongComponent implements OnInit {
     this.route.params
       .switchMap(params => {
         this.songId = params['track_id'];
-        return this.songsService.getSong(this.songId);
+        return this.songService.getSong(this.songId);
       })
       .subscribe(song => {
-        this.name = song.name;
+        this.song = song.name;
+        this.image = song.album.images[1].url;
+        this.artist = song.artists[0].name;
         this.waveSurfer.load(song.preview_url);
       }, error => console.log(error));
 

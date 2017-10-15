@@ -7,7 +7,7 @@ import { TaggedSongsService } from './tagged_songs.service';
 @Component({
   selector: 'app-tagged-songs',
   templateUrl: './tagged_songs.component.html',
-  styles: [`.container{ margin-top: 20px; }`]
+  styles: [`.container{ margin-top: 20px; max-width: 75%}`]
 })
 export class TaggedSongsComponent implements OnInit {
   constructor(
@@ -24,6 +24,6 @@ export class TaggedSongsComponent implements OnInit {
   }
 
   goToTaggedSong(song) : void {
-    this.router.navigate(['/tagged_song', song.id, song.name, song.preview_url]);
+    this.router.navigate(['/tagged_song', song.id]);
   }
 }

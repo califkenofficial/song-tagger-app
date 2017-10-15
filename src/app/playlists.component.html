@@ -1,10 +1,14 @@
 <div class="container">
-  <div class="card card-block">
-  <div class="row">
-    <h4>Your Playlists</h4>
-  </div>
-    <div class="row" *ngFor="let playlist of playlists" (click)="goToPlaylist(playlist)">
-      <p class="card-title">{{ playlist.name }}</p>
+  <div class="row card-group">
+    <div class="col-md-4" *ngFor="let playlist of playlists" (click)="goToPlaylist(playlist)">
+        <div class="card" style="height: 428px;">
+          <img *ngIf="playlist.images[1]" class="card-img-top" src={{playlist.images[1].url}} alt="Card image cap">
+          <div class="card-block">
+            <h4 class="card-title">{{ playlist.name }}</h4>
+          </div>
+        </div>
     </div>
   </div>
 </div>
+
+

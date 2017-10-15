@@ -12,6 +12,7 @@ import { SongService } from './song.service';
 import { ReadableTagService } from './readable_tag.service';
 import { TaggedSongsService } from './tagged_songs.service';
 import { TaggedSongService } from './tagged_song.service';
+import { LoginService } from './login.service';
 import { Tag } from './Tag';
 
 
@@ -37,10 +38,6 @@ const ROUTES = [
     component: LoginComponent,
   },
   {
-    path: 'dashboard',
-    component: DashboardComponent,
-  },
-  {
     path: 'playlists',
     component: PlaylistsComponent,
   },
@@ -57,7 +54,7 @@ const ROUTES = [
     component: TaggedSongsComponent,
   },
   {
-    path: 'tagged_song/:track_id/:track_title/:preview',
+    path: 'tagged_song/:track_id',
     component: TaggedSongComponent,
   },
 ];
@@ -88,6 +85,7 @@ const ROUTES = [
     ReadableTagService,
     TaggedSongsService,
     TaggedSongService,
+    LoginService,
     Tag,
     Presenter
   ],

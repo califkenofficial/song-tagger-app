@@ -1,10 +1,19 @@
 <div class="container">
-  <div class="card card-block">
-    <div class="row">
-       <h4>Choose a song to tag</h4>
-    </div>
-    <div class="row" *ngFor="let song of songs" (click)="goToSong(song)">
-      <p class="card-title">{{ song.track.name }}</p>    
-    </div>
-  </div>
+ <table class="table table-songs">
+        <thead>
+          <tr>
+            <th>Song</th>
+            <th>Artist</th>
+            <th>Album</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr tabindex="1" *ngFor="let song of songs" (click)="goToSong(song)">
+              <td>{{ song.track.name }}</td>
+              <td>{{ song.track.artists[0].name }}</td>
+              <td>{{ song.track.album.name }}</td>
+            </tr>
+        </tbody>
+      </table>
 </div>
+

@@ -1,7 +1,16 @@
 <div class="container">
-  <div class="card card-block">
-    <div class="row" *ngFor="let song of songs" (click)="goToTaggedSong(song)">
-      <p class="card-title">{{ song.name }}</p>
+  <div class="row card-group">
+    <div class="col-md-4" *ngFor="let song of songs" (click)="goToTaggedSong(song)">
+        <div class="card" style="height: 428px;">
+          <img *ngIf="song.album.images[1]" class="card-img-top" src={{song.album.images[1].url}} alt="Card image cap">
+          <div class="card-block">
+            <h4 class="card-title">{{ song.name }}</h4>
+            <p class="card-text">Last update: </p>
+          </div>
+        </div>
     </div>
   </div>
 </div>
+
+
+
