@@ -19,6 +19,7 @@ import Wavesurfer from 'wavesurfer.js';
 export class SongComponent implements OnInit {
   @ViewChild('tags', {read: ViewContainerRef}) viewContainer: ViewContainerRef;
   @ViewChild('tagbutton') button;
+  @ViewChild('input') text_box;
   clicks$: Observable<any>;
   tagTextSubject:Subject<any> = new Subject();
   song: any;
@@ -59,14 +60,26 @@ export class SongComponent implements OnInit {
 
     let mapper = this.toCurrentPosition();
     this.clicks$ = Observable.fromEvent(this.button.nativeElement, 'click')
+      .do(_ => {
+        this.renderer.setElementStyle(this.text_box.nativeElement, 'left', this.getTagPosition()+'%');
+        this.renderer.setElementStyle(this.text_box.nativeElement, 'display', 'inline-table');
+      })
       .map(mapper);
 
     const zipTagInfo = Observable
     .zip(
       this.clicks$,
-      this.tagTextSubject
+      this.tagTextSubject,
+      (position, tagText) => {
+        return {
+          position: position,
+          text: tagText
+        }
+      }
     );
-    const createTag = zipTagInfo.subscribe(val => this.renderAndStoreTag(val));
+    const createTag = zipTagInfo.subscribe(val => {
+      this.renderAndStoreTag(val)
+    });
 
   }
 
@@ -99,15 +112,17 @@ export class SongComponent implements OnInit {
     this.waveSurfer.playPause();
   }
 
-  renderAndStoreTag(tagArray): void {
+  renderAndStoreTag(tagObj): void {
     //create tag component and render it
-    this.tagsArray.push(tagArray);
+    this.renderer.setElementStyle(this.text_box.nativeElement, 'display', 'none');
+
+    this.tagsArray.push(tagObj);
     let tagHolder = document.getElementById('tags');
     const factory = this.componentFactoryResolver.resolveComponentFactory(ReadableTagComponent);
     const ref = this.viewContainer.createComponent(factory);
     this.renderer.setElementStyle(ref.location.nativeElement, 'position', 'absolute')
-    this.renderer.setElementStyle(ref.location.nativeElement, 'left', tagArray[0].currentPosition+'%');
-    this.renderer.createText(ref.location.nativeElement.children[1], tagArray[1]);
+    this.renderer.setElementStyle(ref.location.nativeElement, 'left', tagObj.position.currentPosition+'%');
+    this.renderer.createText(ref.location.nativeElement.children[1], tagObj.text);
   }
 
   saveTagsToSong() {

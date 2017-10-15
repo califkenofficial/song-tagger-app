@@ -1,7 +1,7 @@
 <div id="container">
   <!-- main wavesurfer.js lib -->
   <div class="header">
-    <img src={{image}}/>
+    <img src={{image}} width="150px" height="150px">
     <h4>{{ song }}</h4>  
     <h5 style="margin-bottom: 50px;"> {{ artist }}</h5>
     <button class="btn btn-primary" (click)="playPause()">
@@ -15,12 +15,10 @@
   <div id="waveform"></div>
   <div #tags id="tags">
   </div>
-  <div id="comment" style="text-align: center; margin-top: 50px;">
-    <p>Enter Your Tag Comment</p>
-    <input #box>
-      <button class="btn btn-primary" (click)="submitText(box.value)">
-      Submit
-    </button>
+  <div #input class="input-group" style="text-align: center; margin-top: 15px; 
+    width: 15%; position: absolute; display: none;">
+    <input #box type="text" class="form-control" aria-describedby="basic-addon1">
+    <span class="input-group-addon" id="basic-addon1" (click)="submitText(box.value)">+</span>
   </div>
   <div id="save" style="text-align: center; margin-top: 50px;">
       <button class="btn btn-primary" (click)="saveTagsToSong()">
