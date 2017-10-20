@@ -9,7 +9,6 @@ export class TaggedSongService {
   constructor(private http: Http) { }
   // Get all posts from the API
   getTags(track_id: string ) {
-    console.log(track_id)
     let url = `/api/tagged_song/${track_id}/`;
     return this.http.get(url)
       .map(res => res.json());

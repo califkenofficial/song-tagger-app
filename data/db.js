@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');  
 var tagSchema = new mongoose.Schema({
+  user: String,
+  picture: String,
   songId : String,
   position: Number,
   text: String,

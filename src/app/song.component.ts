@@ -42,8 +42,8 @@ export class SongComponent implements OnInit {
   ngOnInit(): void {
     this.waveSurfer = Wavesurfer.create({
       container: '#waveform',
-      waveColor: 'red',
-      progressColor: 'purple'
+      waveColor: 'green',
+      progressColor: 'blue'
     });
 
     this.route.params
@@ -83,18 +83,18 @@ export class SongComponent implements OnInit {
 
   }
 
-  curryWaveSurfer(waveSurfer){
+  curryWaveSurfer(waveSurfer, getTagPosition){
     return _ => {
       let waveInfo = {
         time: waveSurfer.getCurrentTime(),
-        currentPosition: this.getTagPosition()
+        currentPosition: getTagPosition()
       };
       return waveInfo;
     }
   }
   
   toCurrentPosition() {
-    return this.curryWaveSurfer(this.waveSurfer);
+    return this.curryWaveSurfer(this.waveSurfer, this.getTagPosition);
   }
 
   getTagPosition() {
@@ -122,7 +122,7 @@ export class SongComponent implements OnInit {
     const ref = this.viewContainer.createComponent(factory);
     this.renderer.setElementStyle(ref.location.nativeElement, 'position', 'absolute')
     this.renderer.setElementStyle(ref.location.nativeElement, 'left', tagObj.position.currentPosition+'%');
-    this.renderer.createText(ref.location.nativeElement.children[1], tagObj.text);
+    this.renderer.createText(ref.location.nativeElement.children[1].children[0], tagObj.text);
   }
 
   saveTagsToSong() {

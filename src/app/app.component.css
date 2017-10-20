@@ -1,8 +1,21 @@
 #app{
-  height: 50px;
-  background: lightgray;
+  background: #000;
+  color: #fff;
 }
 .container{
   margin-top: 20px;
   
+}
+
+.navbar{
+  background: #000;
+  border-bottom: 1px solid #fff;
+}
+
+.navbar a {
+  color: #fff;
+}
+
+.navbar a:hover {
+  color: #ebebeb;
 }

@@ -1,13 +1,11 @@
 <div class="container">
-  <div class="row card-group">
-    <div class="col-md-4" *ngFor="let playlist of playlists" (click)="goToPlaylist(playlist)">
-        <div class="card" style="height: 428px;">
-          <img *ngIf="playlist.images[1]" class="card-img-top" src={{playlist.images[1].url}} alt="Card image cap">
-          <div class="card-block">
-            <h4 class="card-title">{{ playlist.name }}</h4>
-          </div>
-        </div>
-    </div>
+  <div class="row">
+    <div class="col-md-4 col-sm-6 col-12" *ngFor="let playlist of playlists" (click)="goToPlaylist(playlist)" style="text-align: center; height: 380px; ">
+      <img *ngIf="playlist.images[1]" class="card-img-top" src={{playlist.images[1].url}} alt="Card image cap">
+      <div>
+        <h4>{{ playlist.name }}</h4>
+      </div>
+    </div>      
   </div>
 </div>
 

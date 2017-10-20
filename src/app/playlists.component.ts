@@ -6,8 +6,7 @@ import { Router }           from '@angular/router';
   selector: 'app-playlists',
   templateUrl: './playlists.component.html',
   styles: [
-  `.container{ margin-top: 20px; max-width: 75%; },
-
+  `.container{ margin-top: 20px; max-width: 75%; }
   `]
 })
 export class PlaylistsComponent implements OnInit {

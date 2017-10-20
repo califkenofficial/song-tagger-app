@@ -43,8 +43,8 @@ export class TaggedSongComponent implements OnInit {
   ngOnInit(): void {
     this.waveSurfer = Wavesurfer.create({
       container: '#waveform',
-      waveColor: 'red',
-      progressColor: 'purple'
+      waveColor: 'green',
+      progressColor: 'blue'
     });
     
     // this.name = this.route.snapshot.params['track_title'];
@@ -180,7 +180,9 @@ export class TaggedSongComponent implements OnInit {
       this.renderer.setElementClass(ref.location.nativeElement, (tag.time).toString(), true);
       this.renderer.setElementStyle(ref.location.nativeElement, 'position', 'absolute')
       this.renderer.setElementStyle(ref.location.nativeElement, 'left', tag.position+'%');
-      this.renderer.createText(ref.location.nativeElement.children[1], tag.text);
+      this.renderer.createText(ref.location.nativeElement.children[1].children[0], tag.text || "");
+      this.renderer.setElementAttribute(ref.location.nativeElement.children[1].children[0].children[0], "src", tag.picture || "https://openclipart.org/image/25px/svg_to_png/250353/icon_user_whiteongrey.png");
+      this.renderer.setElementAttribute(ref.location.nativeElement.children[1].children[0].children[0], "title", tag.name || "unknown");
     });   
   }
 

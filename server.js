@@ -4,13 +4,14 @@ const session = require('express-session');
 const path = require('path');
 const http = require('http');
 const bodyParser = require('body-parser');
+require('dotenv').config();
 
 // Get our API routes
 const api = require('./server/routes/api');
 
 const app = express();
 
-app.use(session({secret: 'ssshhhhh'}));
+app.use(session({secret: process.env.MYSESSIONSECRET}));
 // Parsers for POST data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

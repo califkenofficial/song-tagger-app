@@ -8,11 +8,11 @@ const mongoose = require('mongoose');
 
 let Tag = require('../../data/db');
 
-mongoose.connect('mongodb://localhost/test');
+//mongoose.connect('mongodb://localhost/test');
 
 
-const client_id = '356e5c975b12471d9875649901894fbb'; // Your client id
-const client_secret = '07b51f3f7224498e91cd093302f9da1b'; // Your secret
+const client_id = process.env.MYAPIKEY; // Your client id
+const client_secret = process.env.MYAPISECRET; // Your secret
 const redirect_uri = 'http://localhost:3000/api/callback'; // Your redirect uri
 
 let generateRandomString = function(length) {
@@ -37,7 +37,6 @@ router.get('/', (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-  console.log("over here")
   sess = req.session;
   //Session set when user Request our app via URL
   if(sess.access) {
@@ -102,11 +101,13 @@ router.get('/callback', (req, res) => {
 
         // use the access token to access the Spotify Web API
         request.get(options, (error, response, body) => {  
+          sess.picture = body.images[0].url;
           sess.user = body.display_name;
+          sess.save(function (err) {
+            if (err) return next(err)
+             res.redirect('/tagged_songs');
+          })
         });
-
-        // we can also pass the token to the browser to make requests from there
-        res.redirect('/tagged_songs');
       } else {
         res.redirect('/#' +
           querystring.stringify({
@@ -193,6 +194,7 @@ router.get('/tags/:song_id', (req, res) => {
 
 router.post('/tags/:song_id', (req, res, next) => {
   //console.log("in api", req.params.song_id, req.body);
+  sess = req.session;
   var songId = req.params.song_id;
   var tags = req.body;
   var errors = [];
@@ -205,11 +207,14 @@ router.post('/tags/:song_id', (req, res, next) => {
       });
     } else {
       var newTag = Tag({
+        user: sess.user,
+        picture: sess.picture,
         songId: songId,
         position: tag.position.currentPosition,
         text: tag.text,
         time: tag.position.time
       });
+      console.log(newTag)
       newTag.save(function(err) {
         if (err) {
             errors.push(err)
@@ -222,19 +227,12 @@ router.post('/tags/:song_id', (req, res, next) => {
           }
         }
       })
-      // .then(item => {
-      //   res.status("item saved to database");
-      // })
-      // .catch(err => {
-      //    res.status(400).send("unable to save to database");
-      // });
     }
   }) 
 });
 
 router.get('/tagged_songs', (req, res) => {
   sess = req.session;
-  console.log(sess);
   Tag.aggregate([
      {$group: { _id: "$songId"}}
   ])

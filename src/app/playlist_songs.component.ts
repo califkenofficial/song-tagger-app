@@ -17,7 +17,7 @@ import { PlaylistSongsService } from './playlist_songs.service';
   .table-songs tbody tr td {
     color: #7d7e81;
     border-color: #1c1c1f;
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .table-songs tbody tr:focus,
