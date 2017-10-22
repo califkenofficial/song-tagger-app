@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 
 let Tag = require('../../data/db');
 
-//mongoose.connect('mongodb://localhost/test');
+mongoose.connect('mongodb://localhost/test');
 
 
 const client_id = process.env.MYAPIKEY; // Your client id
