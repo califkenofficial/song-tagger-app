@@ -1,28 +1,23 @@
 //takes observables for userIntents and returns Observable for uiActions
 import { Observable, Subject, Subscription } from 'rxjs';
 
-let createTagCommands = (playEvents, seekEvents, waveSurfer) => {
-  let tagCommands = Observable.from(playEvents)
-    .do(_ => {
-      waveSurfer.playPause();
+let createTagCommands = (userEvents, playbackStats, togglePlayback) => {
+  return Observable.from(userEvents)
+    .do(userEvent => {
+      if (userEvent == "togglePlaybackEvent") {
+        togglePlayback();
+      }   
     })
     .map(_ => {
-      if(waveSurfer.isPlaying()){
-        return {
-          currentTime: waveSurfer.getCurrentTime(),
-          action: 'startTagsPlayback'
-        }
-      } else {
-        return {
-          currentTime: 0,
-          action: 'stopTagsPlayback'
-        }
+      let stats = playbackStats();
+      return {
+        currentTime: stats.currentTime,
+        action: stats.playbackState ? 'startTagsPlayback' : 'stopTagsPlayback'
       }
     });
-  return Observable.merge(tagCommands, seekEvents);
 }
 
-let getNewTimes = (currentTime, tags) => {
+let createShowTagsActions = (currentTime, tags) => {
 
   let tagsObservable = Observable.empty();
   tags.filter(tag => tag.time > currentTime)
@@ -49,16 +44,17 @@ let savedTags;
 
 export class Presenter {
 
-  getViewActions(playEvents, seekEvents, waveSurfer) {
+  getViewActions(userEvents, playbackStats, togglePlayback) {
 
-    let tagsCommands = createTagCommands(playEvents, seekEvents, waveSurfer);
+    let tagsCommands = createTagCommands(userEvents, playbackStats, togglePlayback);
     
     return tagsCommands
       .switchMap(cmd => {
+        let hideAll = Observable.of({tag: null, action: 'hideAll'});
         if(cmd.action === 'startTagsPlayback') {
-          return Observable.concat(Observable.of({tag: null, action: 'hideAll'}), getNewTimes(cmd.currentTime, savedTags))
+          return Observable.concat(hideAll, createShowTagsActions(cmd.currentTime, savedTags));
         } else {
-          return Observable.of({tag: null, action: 'hideAll'});
+          return hideAll;
         }
       });
   }

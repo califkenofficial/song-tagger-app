@@ -3,7 +3,7 @@
     <div class="col-md-4 col-sm-6 col-12" *ngFor="let playlist of playlists" (click)="goToPlaylist(playlist)" style="text-align: center; height: 380px; ">
       <img *ngIf="playlist.images[1]" class="card-img-top" src={{playlist.images[1].url}} alt="Card image cap">
       <div>
-        <h4>{{ playlist.name }}</h4>
+        <p>{{ playlist.name }}</p>
       </div>
     </div>      
   </div>

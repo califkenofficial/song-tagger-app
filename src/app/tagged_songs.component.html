@@ -3,8 +3,7 @@
     <div class="col-md-4 col-sm-6 col-12" *ngFor="let song of songs" (click)="goToTaggedSong(song)" style="text-align: center; height: 380px; ">
         <img *ngIf="song.album.images[1]" class="card-img-top" src={{song.album.images[1].url}} alt="Card image cap">
         <div>
-          <h4>{{ song.name }}</h4>
-          <p>Last updated: </p>
+          <p>{{ song.name }}</p>
         </div>
     </div>
   </div>
