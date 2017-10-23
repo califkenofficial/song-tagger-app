@@ -6,8 +6,8 @@ import { Observable, Subject } from 'rxjs';
 import { Location }                 from '@angular/common';
 import { SongService } from './song.service';
 import { Tag } from './Tag'
-import { ReadableTagComponent } from './readable_tag.component';
-import { ReadableTagService } from './readable_tag.service';
+import { EditableTagComponent } from './editable_tag.component';
+
 
 import Wavesurfer from 'wavesurfer.js';
 
@@ -30,7 +30,6 @@ export class SongComponent implements OnInit {
   tagsArray: any[][] = new Array();
 
   constructor(private songService: SongService,
-    private readableTagService: ReadableTagService,
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
@@ -118,7 +117,7 @@ export class SongComponent implements OnInit {
 
     this.tagsArray.push(tagObj);
     let tagHolder = document.getElementById('tags');
-    const factory = this.componentFactoryResolver.resolveComponentFactory(ReadableTagComponent);
+    const factory = this.componentFactoryResolver.resolveComponentFactory(EditableTagComponent);
     const ref = this.viewContainer.createComponent(factory);
     this.renderer.setElementStyle(ref.location.nativeElement, 'position', 'absolute')
     this.renderer.setElementStyle(ref.location.nativeElement, 'left', tagObj.position.currentPosition+'%');
@@ -126,7 +125,7 @@ export class SongComponent implements OnInit {
   }
 
   saveTagsToSong() {
-    this.readableTagService.saveTags(this.tagsArray, this.songId)
+    this.songService.saveTags(this.tagsArray, this.songId)
       .subscribe(
       result => {
         this.router.navigate(['/playlists']);

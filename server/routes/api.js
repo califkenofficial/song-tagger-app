@@ -187,11 +187,6 @@ router.get('/playlist_songs/:track_id/', (req, res) => {
   })
 });
 
-router.get('/tags/:song_id', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
-  //console.log(req.body);
-})
-
 router.post('/tags/:song_id', (req, res, next) => {
   //console.log("in api", req.params.song_id, req.body);
   sess = req.session;

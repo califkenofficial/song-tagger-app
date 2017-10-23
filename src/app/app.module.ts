@@ -9,7 +9,6 @@ import { Presenter } from './presenter.module';
 import { PlaylistsService } from './playlists.service';
 import { PlaylistSongsService } from './playlist_songs.service';
 import { SongService } from './song.service';
-import { ReadableTagService } from './readable_tag.service';
 import { TaggedSongsService } from './tagged_songs.service';
 import { TaggedSongService } from './tagged_song.service';
 import { LoginService } from './login.service';
@@ -22,6 +21,7 @@ import { SongComponent } from './song.component';
 import { LoginComponent } from './login.component';
 import { DashboardComponent } from './dashboard.component';
 import { ReadableTagComponent } from './readable_tag.component';
+import { EditableTagComponent } from './editable_tag.component';
 import { TaggedSongsComponent } from './tagged_songs.component';
 import { TaggedSongComponent } from './tagged_song.component';
 
@@ -68,10 +68,11 @@ const ROUTES = [
     LoginComponent,
     DashboardComponent,
     ReadableTagComponent,
+    EditableTagComponent,
     TaggedSongsComponent,
     TaggedSongComponent
   ],
-  entryComponents: [ReadableTagComponent],
+  entryComponents: [ReadableTagComponent, EditableTagComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -82,7 +83,6 @@ const ROUTES = [
     PlaylistsService,
     PlaylistSongsService,
     SongService,
-    ReadableTagService,
     TaggedSongsService,
     TaggedSongService,
     LoginService,

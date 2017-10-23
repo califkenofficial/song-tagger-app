@@ -14,4 +14,8 @@ export class SongService {
     return this.http.get(url)
       .map(res => res.json());
   }
+  
+   saveTags(tags, song_id) {
+    return this.http.post('/api/tags/'+song_id, tags)
+  }
 }

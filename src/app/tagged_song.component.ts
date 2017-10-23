@@ -114,9 +114,9 @@ export class TaggedSongComponent implements OnInit {
       this.renderer.setElementClass(ref.location.nativeElement, (tag.time).toString(), true);
       this.renderer.setElementStyle(ref.location.nativeElement, 'position', 'absolute')
       this.renderer.setElementStyle(ref.location.nativeElement, 'left', tag.position+'%');
-      this.renderer.createText(ref.location.nativeElement.children[1].children[0], tag.text || "");
-      this.renderer.setElementAttribute(ref.location.nativeElement.children[1].children[0].children[0], "src", tag.picture || "https://openclipart.org/image/25px/svg_to_png/250353/icon_user_whiteongrey.png");
-      this.renderer.setElementAttribute(ref.location.nativeElement.children[1].children[0].children[0], "title", tag.name || "unknown");
+      this.renderer.createText(ref.location.nativeElement.children[1].children[1], tag.text || "");
+      this.renderer.createText(ref.location.nativeElement.children[1].children[0], tag.user || "unknown");
+      this.renderer.setElementAttribute(ref.location.nativeElement.children[0].children[0], "src", tag.picture || "https://openclipart.org/image/25px/svg_to_png/250353/icon_user_whiteongrey.png");
     });   
   }
 }
