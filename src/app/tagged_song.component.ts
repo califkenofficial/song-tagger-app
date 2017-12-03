@@ -59,7 +59,6 @@ export class TaggedSongComponent implements OnInit {
     this.taggedSongService.getTags(this.route.snapshot.params['track_id'])
       .subscribe(tags => {
         this.tags = tags;
-        console.log(JSON.stringify(tags))
         this.presenter.setTags(tags);
         this.renderTags(this.tags);
       });

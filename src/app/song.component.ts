@@ -47,11 +47,11 @@ export class SongComponent implements OnInit {
 
     this.route.params
       .switchMap(params => {
-        this.songId = params['track_id'];
-        return this.songService.getSong(this.songId);
+        return this.songService.getSong(params['track_id']);
       })
       .subscribe(song => {
         this.song = song.name;
+        this.songId = song.id;
         this.image = song.album.images[1].url;
         this.artist = song.artists[0].name;
         this.waveSurfer.load(song.preview_url);

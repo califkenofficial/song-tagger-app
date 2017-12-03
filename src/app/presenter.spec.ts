@@ -50,7 +50,7 @@ fdescribe("Presenter Behavior", function() {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
   });
 
-  //always call these two beforeEach in each test that sets these to maek test work
+  //always call these two beforeEach in each test that sets these to make test work
   let given_playback_is_at_position = (time) => {
     playbackTime = time;
   }
